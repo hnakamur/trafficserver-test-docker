@@ -32,7 +32,11 @@ RUN cd ~/dev/trafficserver/tests \
 
 # Run trafficserver tests
 COPY run-trafficserver-tests.sh /usr/local/bin/
-RUN /usr/local/bin/run-trafficserver-tests.sh || :
+RUN mkdir /home/build/dev/lua
+COPY --chown=build:build tests/gold_tests/pluginTest/lua/ /home/build/dev/lua/
+RUN cp -pr /home/build/dev/lua ~/dev/trafficserver/tests/gold_tests/pluginTest/
+RUN /usr/local/bin/run-trafficserver-tests.sh run -f hello_lua || :
+RUN /usr/local/bin/run-trafficserver-tests.sh run -f lua_watermark || :
 
 ## Run negative cache tests
 #COPY --chown=build:build tests/gold_tests/negative_cache/ /tmp/negative_cache/
